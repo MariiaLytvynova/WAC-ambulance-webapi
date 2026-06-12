@@ -6,6 +6,7 @@ import (
     "strings"
     "github.com/gin-gonic/gin"
     "github.com/MariiaLytvynova/WAC-ambulance-webapi/api"
+    "github.com/MariiaLytvynova/WAC-ambulance-webapi/internal/ambulance_wl"
 )
 
 func main() {
@@ -21,6 +22,12 @@ func main() {
     engine := gin.New()
     engine.Use(gin.Recovery())
     // request routings
+    handleFunctions := &ambulance_wl.ApiHandleFunctions{ //vytvaram objekty, ktore implementuju rozhrania
+    AmbulanceConditionsAPI:  ambulance_wl.NewAmbulanceConditionsApi(),
+    AmbulanceWaitingListAPI: ambulance_wl.NewAmbulanceWaitingListApi(),
+  }
+  ambulance_wl.NewRouterWithGinEngine(engine, *handleFunctions) //spracuje url poziadavku
+
     engine.GET("/openapi", api.HandleOpenApi)
     engine.Run(":" + port)
 }
