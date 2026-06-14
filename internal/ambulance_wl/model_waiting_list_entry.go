@@ -23,7 +23,7 @@ type WaitingListEntry struct {
 	Name string `json:"name,omitempty"`
 
 	// Unique identifier of the patient known to Web-In-Cloud system
-	PatientId string `json:"patientId"`
+	PatientId int32 `json:"patientId"`
 
 	// Timestamp since when the patient entered the waiting list
 	WaitingSince time.Time `json:"waitingSince"`

@@ -13,10 +13,10 @@ package ambulance_wl
 type Examination struct {
 
 	// Unique identifier of the examination
-	Id float32 `json:"id"`
+	Id int32 `json:"id"`
 
 	// Unique identifier of the patient
-	PatientId string `json:"patientId"`
+	PatientId int32 `json:"patientId"`
 
 	// The day of the examination
 	Day string `json:"day"`
