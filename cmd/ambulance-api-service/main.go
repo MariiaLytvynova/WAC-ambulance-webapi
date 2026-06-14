@@ -25,6 +25,7 @@ func main() {
     handleFunctions := &ambulance_wl.ApiHandleFunctions{ //vytvaram objekty, ktore implementuju rozhrania
     AmbulanceConditionsAPI:  ambulance_wl.NewAmbulanceConditionsApi(),
     AmbulanceWaitingListAPI: ambulance_wl.NewAmbulanceWaitingListApi(),
+    ExaminationsAPI:         ambulance_wl.NewExaminationsApi(),
   }
   ambulance_wl.NewRouterWithGinEngine(engine, *handleFunctions) //spracuje url poziadavku
 
