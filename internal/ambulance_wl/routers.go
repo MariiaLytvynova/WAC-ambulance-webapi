@@ -67,8 +67,8 @@ type ApiHandleFunctions struct {
 	AmbulanceConditionsAPI AmbulanceConditionsAPI
 	// Routes for the AmbulanceWaitingListAPI part of the API
 	AmbulanceWaitingListAPI AmbulanceWaitingListAPI
-	// Routes for the ExaminationsAPI part of the API
-	ExaminationsAPI ExaminationsAPI
+	// Routes for the ExaminationsPatientAPI part of the API
+	ExaminationsPatientAPI ExaminationsPatientAPI
 }
 
 func getRoutes(handleFunctions ApiHandleFunctions) []Route {
@@ -112,20 +112,26 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 		{
 			"CreateExamination",
 			http.MethodPost,
-			"/api/examinations/:patientId/:id",
-			handleFunctions.ExaminationsAPI.CreateExamination,
+			"/api/examinations/:patientId",
+			handleFunctions.ExaminationsPatientAPI.CreateExamination,
 		},
 		{
 			"DeleteExamination",
 			http.MethodDelete,
-			"/api/examinations/:patientId/:id",
-			handleFunctions.ExaminationsAPI.DeleteExamination,
+			"/api/examinations/:patientId",
+			handleFunctions.ExaminationsPatientAPI.DeleteExamination,
+		},
+		{
+			"GetExaminations",
+			http.MethodGet,
+			"/api/examinations/:patientId",
+			handleFunctions.ExaminationsPatientAPI.GetExaminations,
 		},
 		{
 			"UpdateExamination",
 			http.MethodPut,
-			"/api/examinations/:patientId/:id",
-			handleFunctions.ExaminationsAPI.UpdateExamination,
+			"/api/examinations/:patientId",
+			handleFunctions.ExaminationsPatientAPI.UpdateExamination,
 		},
 	}
 }

@@ -16,7 +16,9 @@ tags:
   description: Ambulance Waiting List API
 - name: ambulanceConditions
   description: Patient conditions and symptoms handled in the ambulance
-- name: ambulanceExaminations
+# - name: ambulanceExaminations
+#   description: Examinations performed on patients in the ambulance
+- name: examinationsPatient
   description: Examinations performed on patients in the ambulance
 
 paths:
@@ -227,34 +229,174 @@ paths:
         "404":
           description: Ambulance with such ID does not exists
 
-  "/examinations/{patientId}/{id}":
+  # "/examinations/{patientId}/{id}":
+  #   post:
+  #     tags:
+  #       - examinations
+  #     summary: Saves new examination definition
+  #     operationId: createExamination
+  #     description: Use this method to initialize new examination in the system
+  #     parameters:
+  #       - in: path
+  #         name: patientId
+  #         description: pass the id of the patient for whom the examination is being created
+  #         required: true
+  #         schema:
+  #           type: int32
+  #       - in: path
+  #         name: id
+  #         description: pass the id of the particular new examination
+  #         required: true
+  #         schema:
+  #           type: int32
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/Examination"
+  #           examples:
+  #             request-sample:
+  #               $ref: "#/components/examples/ExaminationExample"
+  #       description: Examination details to store
+  #       required: true
+  #     responses:
+  #       "200":
+  #         description: >-
+  #           Value of stored examination
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Examination"
+  #             examples:
+  #               updated-response:
+  #                 $ref: "#/components/examples/ExaminationExample"
+  #       "400":
+  #         description: Missing mandatory properties of input object.
+  #       "409":
+  #         description: Entry with the specified id already exists.
+  #   put:
+  #     tags:
+  #       - examinations
+  #     summary: Updates specific examination definition
+  #     operationId: updateExamination
+  #     parameters:
+  #       - in: path
+  #         name: patientId
+  #         description: pass the id of the patient for whom the examination is being updated
+  #         required: true
+  #         schema:
+  #           type: int32
+  #       - in: path
+  #         name: id
+  #         description: pass the id of the particular examination to be updated.
+  #         required: true
+  #         schema:
+  #           type: int32
+          
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/Examination"
+  #           examples:
+  #             request:
+  #               $ref: "#/components/examples/ExaminationExample"
+  #       description: Examination details to update
+  #       required: true
+  #     responses:
+  #       "200":
+  #         description: >-
+  #           value of the examination with re-computed estimated time of
+  #           entry
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Examination"
+  #             examples:
+  #               response:
+  #                 $ref: "#/components/examples/ExaminationExample"
+  #       "403":
+  #         description: >-
+  #           Value of the id and the data id is mismatching. Details are
+  #           provided in the response body.
+  #       "404":
+  #         description: Examination with such ID does not exist
+   
+  #   delete:
+  #     tags:
+  #       - examinations
+  #     summary: Deletes specific examination for specific patient
+  #     operationId: deleteExamination
+  #     description: Use this method to delete the specific examination for the specified patient.
+  #     parameters:
+  #       - in: path
+  #         name: patientId
+  #         description: pass the id of the patient for whom the examination is being deleted
+  #         required: true
+  #         schema:
+  #           type: int32
+  #       - in: path
+  #         name: id
+  #         description: pass the id of the particular examination to be deleted.
+  #         required: true
+  #         schema:
+  #           type: int32
+  #     responses:
+  #       "204":
+  #         description: Examination is deleted
+  #       "404":
+  #         description: Examination with ID does not exist
+
+  "/examinations/{patientId}":
+    get:
+      tags:
+        - examinationsPatient
+      summary: Provides the examinations list
+      operationId: getExaminations
+      description: By using patientId you get list of examinations for that patient
+      parameters:
+        - in: path
+          name: patientId
+          description: pass the id of the particular patient
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: value of the waiting list entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Examinations"
+              examples:
+                response:
+                  $ref: "#/components/examples/ExaminationsExample"
+        "404":
+          description: Ambulance with such ID does not exist
+     
     post:
       tags:
-        - examinations
-      summary: Saves new examination definition
+        - examinationsPatient
+      summary: Prints examinations of patient
       operationId: createExamination
       description: Use this method to initialize new examination in the system
       parameters:
         - in: path
           name: patientId
-          description: pass the id of the patient for whom the examination is being created
+          description: pass the id of the patient for whom the examinations are being displayed
           required: true
           schema:
-            type: int32
-        - in: path
-          name: id
-          description: pass the id of the particular new examination
-          required: true
-          schema:
-            type: int32
+            type: integer
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Examination"
+              $ref: "#/components/schemas/Examinations"
             examples:
               request-sample:
-                $ref: "#/components/examples/ExaminationExample"
+                $ref: "#/components/examples/ExaminationsExample"
         description: Examination details to store
         required: true
       responses:
@@ -264,18 +406,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Examination"
+                $ref: "#/components/schemas/Examinations"
               examples:
                 updated-response:
-                  $ref: "#/components/examples/ExaminationExample"
+                  $ref: "#/components/examples/ExaminationsExample"
         "400":
           description: Missing mandatory properties of input object.
         "409":
           description: Entry with the specified id already exists.
     put:
       tags:
-        - examinations
-      summary: Updates specific examination definition
+        - examinationsPatient
+      summary: Updates specific examinations definition
       operationId: updateExamination
       parameters:
         - in: path
@@ -283,22 +425,16 @@ paths:
           description: pass the id of the patient for whom the examination is being updated
           required: true
           schema:
-            type: int32
-        - in: path
-          name: id
-          description: pass the id of the particular examination to be updated.
-          required: true
-          schema:
-            type: int32
-          
+            type: integer
+     
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Examination"
+              $ref: "#/components/schemas/Examinations"
             examples:
               request:
-                $ref: "#/components/examples/ExaminationExample"
+                $ref: "#/components/examples/ExaminationsExample"
         description: Examination details to update
         required: true
       responses:
@@ -309,10 +445,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Examination"
+                $ref: "#/components/schemas/Examinations"
               examples:
                 response:
-                  $ref: "#/components/examples/ExaminationExample"
+                  $ref: "#/components/examples/ExaminationsExample"
         "403":
           description: >-
             Value of the id and the data id is mismatching. Details are
@@ -322,7 +458,7 @@ paths:
    
     delete:
       tags:
-        - examinations
+        - examinationsPatient
       summary: Deletes specific examination for specific patient
       operationId: deleteExamination
       description: Use this method to delete the specific examination for the specified patient.
@@ -332,18 +468,15 @@ paths:
           description: pass the id of the patient for whom the examination is being deleted
           required: true
           schema:
-            type: int32
-        - in: path
-          name: id
-          description: pass the id of the particular examination to be deleted.
-          required: true
-          schema:
-            type: int32
+            type: integer
+    
       responses:
         "204":
           description: Examination is deleted
         "404":
           description: Examination with ID does not exist
+
+
 
 
 components:
@@ -361,7 +494,7 @@ components:
           example: Jožko Púčik
           description: Name of patient in waiting list
         patientId:
-          type: int32
+          type: integer
           example: 4605
           description: Unique identifier of the patient known to Web-In-Cloud system
         waitingSince:
@@ -376,7 +509,6 @@ components:
           description: Estimated time of entering ambulance. Ignored on post.
         estimatedDurationMinutes:
           type: integer
-          format: int32
           example: 15
           description: >-
             Estimated duration of ambulance visit. If not provided then it will
@@ -403,20 +535,51 @@ components:
           description: Link to encyclopedical explanation of the patient's condition
         typicalDurationMinutes:
           type: integer
-          format: int32
           example: 20
       example:
         $ref: "#/components/examples/ConditionExample"  
-    Examination:
+    # Examination:
+    #   type: object
+    #   required: [ "id", "patientId", "day", "startTime", "endTime", "name" ]
+    #   properties:
+    #     id:
+    #       type: int32
+    #       example: 1
+    #       description: Unique identifier of the examination
+    #     patientId:
+    #       type: int32
+    #       example: 46052
+    #       description: Unique identifier of the patient
+    #     day:
+    #       type: string
+    #       example: monday
+    #       description: The day of the examination
+    #     startTime:
+    #       type: string
+    #       format: time
+    #       example: "10:00:00"
+    #       description: The start time of the examination
+    #     endTime:
+    #       type: string
+    #       format: time
+    #       example: "11:00:00"
+    #       description: The end time of the examination
+    #     name:
+    #       type: string
+    #       example: Ohladanie pacienta
+    #       description: Name of the examination
+    #   example:
+    #       $ref: "#/components/examples/ExaminationExample"  
+    Examinations:
       type: object
       required: [ "id", "patientId", "day", "startTime", "endTime", "name" ]
       properties:
         id:
-          type: int32
+          type: integer
           example: 1
           description: Unique identifier of the examination
         patientId:
-          type: int32
+          type: integer
           example: 46052
           description: Unique identifier of the patient
         day:
@@ -438,8 +601,10 @@ components:
           example: Ohladanie pacienta
           description: Name of the examination
       example:
-          $ref: "#/components/examples/ExaminationExample"  
-  
+          $ref: "#/components/examples/ExaminationsExample"  
+   
+
+
   examples:
     WaitingListEntryExample:
       summary: Ľudomír Zlostný waiting
@@ -512,16 +677,32 @@ components:
         - value: Odber krvi
           code: blood-test
           typicalDurationMinutes: 10
-    ExaminationExample:
-      summary: Sample of examination
+    # ExaminationExample:
+    #   summary: Sample of examination
+    #   description: |
+    #     Example of examination that can be performed on patient
+    #  #id", "patientId", "day", "startTime", "endTime", "name
+    #   value:
+    #     id: 1
+    #     patientId: 46052
+    #     day: pondelok
+    #     startTime: "10:00:00"
+    #     endTime: "11:00:00"
+    #     name: Ohladanie pacienta
+    ExaminationsExample:
+      summary: List of examinations
       description: |
-        Example of examination that can be performed on patient
-     #id", "patientId", "day", "startTime", "endTime", "name
+        Example list of examinations that can be performed on patients
       value:
-        id: 1
-        patientId: 46052
-        day: pondelok
-        startTime: "10:00:00"
-        endTime: "11:00:00"
-        name: Ohladanie pacienta
-       
+        - id: 1
+          patientId: 46052
+          day: pondelok
+          startTime: "10:00:00"
+          endTime: "11:00:00"
+          name: Ohladanie pacienta
+        - id: 2
+          patientId: 7809
+          day: utorok
+          startTime: "14:00:00"
+          endTime: "15:00:00"
+          name: Kontrola pacienta
