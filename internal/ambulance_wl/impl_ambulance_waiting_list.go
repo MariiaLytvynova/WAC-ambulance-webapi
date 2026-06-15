@@ -68,7 +68,41 @@ func (o implAmbulanceWaitingListAPI) GetWaitingListEntries(c *gin.Context) {
 }
 
 func (o implAmbulanceWaitingListAPI) GetWaitingListEntry(c *gin.Context) {
-    c.AbortWithStatus(http.StatusNotImplemented)
+    rows, err := o.db.DB.Query(`
+        SELECT id_patient, name, fullname FROM patients
+    `) //ziskaj vsetky vysetrenia pacienta z db
+
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error": "Internal server error",
+        })
+        return
+    }
+    defer rows.Close()
+
+    var waiting [] WaitingListEntry
+
+    for rows.Next() {
+        var e WaitingListEntry
+
+        err := rows.Scan(
+            &e.IdPatient,
+            &e.Name,
+            &e.Fullname,
+        )
+
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{
+                "error": "Scan error",
+            })
+            return
+        }
+
+        waiting = append(waiting, e)
+    }
+
+    c.JSON(http.StatusOK, waiting)
+
 }
 
 func (o implAmbulanceWaitingListAPI) UpdateWaitingListEntry(c *gin.Context) {
