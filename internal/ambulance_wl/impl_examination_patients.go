@@ -19,7 +19,45 @@ func NewExaminationsPatientApi(db *db_service.PostgresService) Examinationpatien
 }
 
 func (o implExaminationPatientAPI) CreateExamination(c *gin.Context) {
- //posli vsetky vysetrenia pacienta ako json
+	fmt.Println("Add new examination")
+ var examination ExaminationResponse
+    if err := c.BindJSON(&examination); err != nil {
+            fmt.Println("----- BindJSON error:", err)
+
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+    fmt.Println("id_patient =", examination.PatientId)
+
+     _, err := o.db.DB.Exec(`
+        INSERT INTO examinations (
+            id_patient,
+            day,
+            start_time,
+            end_time,
+            name_examination
+        )
+        VALUES ($1, $2, $3, $4, $5)
+    `,
+        examination.PatientId,
+        examination.Day,
+        examination.StartTime,
+        examination.EndTime,
+        examination.Name,
+    )
+
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+
+    c.JSON(http.StatusCreated, gin.H{
+        "message": "Examination created successfully",
+    })
 }
 
 func (o implExaminationPatientAPI) DeleteExamination(c *gin.Context) {
