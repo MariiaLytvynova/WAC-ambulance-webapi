@@ -76,37 +76,37 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 		{
 			"GetConditions",
 			http.MethodGet,
-			"/api/waiting-list/:ambulanceId/condition",
+			"/api/waiting-list/condition",
 			handleFunctions.AmbulanceConditionsAPI.GetConditions,
 		},
 		{
 			"CreateWaitingListEntry",
 			http.MethodPost,
-			"/api/waiting-list/:ambulanceId/entries",
+			"/api/waiting-list",
 			handleFunctions.AmbulanceWaitingListAPI.CreateWaitingListEntry,
 		},
 		{
 			"DeleteWaitingListEntry",
 			http.MethodDelete,
-			"/api/waiting-list/:ambulanceId/entries/:entryId",
+			"/api/waiting-list/entries/:id_patient",
 			handleFunctions.AmbulanceWaitingListAPI.DeleteWaitingListEntry,
 		},
 		{
 			"GetWaitingListEntries",
 			http.MethodGet,
-			"/api/waiting-list/:ambulanceId/entries",
+			"/api/waiting-list",
 			handleFunctions.AmbulanceWaitingListAPI.GetWaitingListEntries,
 		},
 		{
 			"GetWaitingListEntry",
 			http.MethodGet,
-			"/api/waiting-list/:ambulanceId/entries/:entryId",
+			"/api/waiting-list/entries/:id_patient",
 			handleFunctions.AmbulanceWaitingListAPI.GetWaitingListEntry,
 		},
 		{
 			"UpdateWaitingListEntry",
 			http.MethodPut,
-			"/api/waiting-list/:ambulanceId/entries/:entryId",
+			"/api/waiting-list/entries/:id_patient",
 			handleFunctions.AmbulanceWaitingListAPI.UpdateWaitingListEntry,
 		},
 		{

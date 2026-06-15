@@ -10,29 +10,14 @@
 
 package ambulance_wl
 
-import (
-	"time"
-)
-
 type WaitingListEntry struct {
 
 	// Unique id of the entry in this waiting list
-	Id string `json:"id"`
+	IdPatient int32 `json:"id_patient"`
 
 	// Name of patient in waiting list
-	Name string `json:"name,omitempty"`
-
-	// Unique identifier of the patient known to Web-In-Cloud system
-	PatientId int32 `json:"patientId"`
+	Name string `json:"name"`
 
 	// Timestamp since when the patient entered the waiting list
-	WaitingSince time.Time `json:"waitingSince"`
-
-	// Estimated time of entering ambulance. Ignored on post.
-	EstimatedStart time.Time `json:"estimatedStart,omitempty"`
-
-	// Estimated duration of ambulance visit. If not provided then it will be computed based on condition and ambulance settings
-	EstimatedDurationMinutes int32 `json:"estimatedDurationMinutes"`
-
-	Condition Condition `json:"condition,omitempty"`
+	Fullname string `json:"fullname"`
 }

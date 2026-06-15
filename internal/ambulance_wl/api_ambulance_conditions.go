@@ -17,7 +17,7 @@ import (
 type AmbulanceConditionsAPI interface {
 
 
-    // GetConditions Get /api/waiting-list/:ambulanceId/condition
+    // GetConditions Get /api/waiting-list/condition
     // Provides the list of conditions associated with ambulance 
      GetConditions(c *gin.Context)
 

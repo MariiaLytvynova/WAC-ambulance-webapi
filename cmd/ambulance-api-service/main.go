@@ -8,7 +8,7 @@ import (
     "github.com/MariiaLytvynova/WAC-ambulance-webapi/api"
     "github.com/MariiaLytvynova/WAC-ambulance-webapi/internal/ambulance_wl"
     "github.com/MariiaLytvynova/WAC-ambulance-webapi/internal/db_service"
-    "context"
+   // "context"
     "time"
     "github.com/gin-contrib/cors"
 )
@@ -33,6 +33,8 @@ func main() {
     if !strings.EqualFold(environment, "production") { // case insensitive comparison
         gin.SetMode(gin.DebugMode)
     }
+    log.Printf("Server starting on port %s", port)
+
     engine := gin.New()
     engine.Use(gin.Recovery())
 
@@ -49,12 +51,15 @@ func main() {
     // request routings
     handleFunctions := &ambulance_wl.ApiHandleFunctions{ //vytvaram objekty, ktore implementuju rozhrania
     AmbulanceConditionsAPI:  ambulance_wl.NewAmbulanceConditionsApi(db),
-    AmbulanceWaitingListAPI: ambulance_wl.NewAmbulanceWaitingListApi(),
+    AmbulanceWaitingListAPI: ambulance_wl.NewAmbulanceWaitingListApi(db),
     //ExaminationsAPI:         ambulance_wl.NewExaminationsApi(db),
-    ExaminationpatientAPI:  ambulance_wl.NewExaminationsPatientApi(db),
+    ExaminationsPatientAPI:  ambulance_wl.NewExaminationsPatientApi(db),
   }
   ambulance_wl.NewRouterWithGinEngine(engine, *handleFunctions) //spracuje url poziadavku
 
     engine.GET("/openapi", api.HandleOpenApi)
     engine.Run(":" + port)
+    if err != nil {
+    log.Fatalf("Failed to start server: %v", err)
+}
 }

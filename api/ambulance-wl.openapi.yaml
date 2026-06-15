@@ -22,20 +22,15 @@ tags:
   description: Examinations performed on patients in the ambulance
 
 paths:
-  "/waiting-list/{ambulanceId}/entries":
+  "/waiting-list":
     get:
       tags:
         - ambulanceWaitingList
       summary: Provides the ambulance waiting list
       operationId: getWaitingListEntries
       description: By using ambulanceId you get list of entries in ambulance waiting list
-      parameters:
-        - in: path
-          name: ambulanceId
-          description: pass the id of the particular ambulance
-          required: true
-          schema:
-            type: string
+      
+      
       responses:
         "200":
           description: value of the waiting list entries
@@ -56,13 +51,7 @@ paths:
       summary: Saves new entry into waiting list
       operationId: createWaitingListEntry
       description: Use this method to store new entry into the waiting list.
-      parameters:
-        - in: path
-          name: ambulanceId
-          description: pass the id of the particular ambulance
-          required: true
-          schema:
-            type: string
+      
       requestBody:
         content:
           application/json:
@@ -93,7 +82,7 @@ paths:
           description: Entry with the specified id already exists
 
 
-  "/waiting-list/{ambulanceId}/entries/{entryId}":
+  "/waiting-list/entries/{id_patient}":
     get:
       tags:
         - ambulanceWaitingList
@@ -104,17 +93,11 @@ paths:
         item ambulance.
       parameters:
         - in: path
-          name: ambulanceId
-          description: pass the id of the particular ambulance
-          required: true
-          schema:
-            type: string
-        - in: path
-          name: entryId
+          name: id_patient
           description: pass the id of the particular entry in the waiting list
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: value of the waiting list entries
@@ -135,17 +118,11 @@ paths:
       description: Use this method to update content of the waiting list entry.
       parameters:
         - in: path
-          name: ambulanceId
-          description: pass the id of the particular ambulance
-          required: true
-          schema:
-            type: string
-        - in: path
-          name: entryId
+          name: id_patient
           description: pass the id of the particular entry in the waiting list
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         content:
           application/json:
@@ -182,17 +159,11 @@ paths:
       description: Use this method to delete the specific entry from the waiting list.
       parameters:
         - in: path
-          name: ambulanceId
-          description: pass the id of the particular ambulance
-          required: true
-          schema:
-            type: string
-        - in: path
-          name: entryId
+          name: id_patient
           description: pass the id of the particular entry in the waiting list
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         "204":
           description: Item deleted
@@ -200,20 +171,13 @@ paths:
           description: Ambulance or Entry with such ID does not exists
  
  
-  "/waiting-list/{ambulanceId}/condition":
+  "/waiting-list/condition":
     get:
       tags:
         - ambulanceConditions
       summary: Provides the list of conditions associated with ambulance
       operationId: getConditions
       description: By using ambulanceId you get list of predefined conditions
-      parameters:
-        - in: path
-          name: ambulanceId
-          description: pass the id of the particular ambulance
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: value of the predefined conditions
@@ -483,40 +447,25 @@ components:
   schemas:
     WaitingListEntry:
       type: object
-      required: [id, patientId, waitingSince, estimatedDurationMinutes]
+      required: [id_patient, name, fullname]
       properties:
-        id:
-          type: string
-          example: x321ab3
+        id_patient:
+          type: integer
+          example: 1
           description: Unique id of the entry in this waiting list
         name:
           type: string
-          example: Jožko Púčik
+          example: Jožko
           description: Name of patient in waiting list
-        patientId:
-          type: integer
-          example: 4605
-          description: Unique identifier of the patient known to Web-In-Cloud system
-        waitingSince:
+        fullname:
           type: string
-          format: date-time
-          example: "2038-12-24T10:05:00Z"
+          example: Mrkva
           description: Timestamp since when the patient entered the waiting list
-        estimatedStart:
-          type: string
-          format: date-time
-          example: "2038-12-24T10:35:00Z"
-          description: Estimated time of entering ambulance. Ignored on post.
-        estimatedDurationMinutes:
-          type: integer
-          example: 15
-          description: >-
-            Estimated duration of ambulance visit. If not provided then it will
-            be computed based on condition and ambulance settings
-        condition:
-          $ref: "#/components/schemas/Condition"
+      #   condition:
+      #     $ref: "#/components/schemas/Condition"
       example:
         $ref: "#/components/examples/WaitingListEntryExample"
+  
     Condition:
       description: "Describes disease, symptoms, or other reasons of patient   visit"
       required:
@@ -612,16 +561,9 @@ components:
         Entry represents a patient waiting in the ambulance prep room with
         defined symptoms
       value:
-        id: x321ab3
-        name: Ľudomír Zlostný
-        patientId: 7489
-        waitingSince: "2038-12-24T10:05:00.000Z"
-        estimatedStart: "2038-12-24T10:35:00.000Z"
-        estimatedDurationMinutes: 15
-        condition:
-          value: Nevoľnosť
-          code: nausea
-          reference: "https://zdravoteka.sk/priznaky/nevolnost/"
+        id_patient: 1
+        name: Janko
+        fullname: Krala
     ConditionExample:
       summary: Conditions and symptoms
       description: list of few symptoms that can be chosen by patients
@@ -635,26 +577,13 @@ components:
       description: |
         Example waiting list containing 2 patients
       value:
-      - id: x321ab3
-        name: Jožko Púčik
-        patientId: 46052
-        waitingSince: "2038-12-24T10:05:00.000Z"
-        estimatedStart: "2038-12-24T10:35:00.000Z"
-        estimatedDurationMinutes: 15
-        condition:
-          value: Teploty
-          code: subfebrilia
-          reference: "https://zdravoteka.sk/priznaky/zvysena-telesna-teplota/"
-      - id: x321ab4
-        name: Ferdinand Trety
-        patientId: 7809
-        waitingSince: "2038-12-24T10:25:00.000Z"
-        estimatedStart: "2038-12-24T10:50:00.000Z"
-        estimatedDurationMinutes: 25
-        condition:
-          value: Nevoľnosť
-          code: nausea
-          reference: "https://zdravoteka.sk/priznaky/nevolnost/"
+      - id_patient: 1
+        name: Janko
+        fullname: Kral
+      - id_patient: 2
+        name: Jan
+        fullname: Mrkva
+
     ConditionsListExample:
       summary: Sample of GP ambulance conditions
       description: |

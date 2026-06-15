@@ -2,7 +2,7 @@ package ambulance_wl
 
 import (
     "net/http"
-
+    "fmt"
     "github.com/gin-gonic/gin"
 	"github.com/MariiaLytvynova/WAC-ambulance-webapi/internal/db_service"
 
@@ -30,10 +30,42 @@ func (o implExaminationPatientAPI) DeleteExamination(c *gin.Context) {
 }
 
 func (o implExaminationPatientAPI) UpdateExamination(c *gin.Context) {
-	//patientId := c.Param("patientId")
-//	examinationId := c.Param("id")
-	
-	//c.AbortWithStatus(http.StatusNotImplemented)
+	fmt.Println("UpdateExamination HIT")
+    var examination ExaminationResponse
+    if err := c.BindJSON(&examination); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+fmt.Printf("UPDATE payload: %+v\n", examination)
+    _, err := o.db.DB.Exec(`
+        UPDATE examinations
+        SET
+            day = $1,
+            start_time = $2,
+            end_time = $3,
+            name_examination = $4
+        WHERE id = $5 and id_patient = $6
+    `,
+        examination.Day,
+        examination.StartTime,
+        examination.EndTime,
+        examination.Name,
+        examination.Id,
+		examination.PatientId,
+    )
+
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{
+        "message": "updated",
+    })
 }	
 
 func (o implExaminationPatientAPI) GetExaminations(c *gin.Context) {

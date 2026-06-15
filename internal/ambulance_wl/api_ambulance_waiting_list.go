@@ -17,23 +17,23 @@ import (
 type AmbulanceWaitingListAPI interface {
 
 
-    // CreateWaitingListEntry Post /api/waiting-list/:ambulanceId/entries
+    // CreateWaitingListEntry Post /api/waiting-list
     // Saves new entry into waiting list 
      CreateWaitingListEntry(c *gin.Context)
 
-    // DeleteWaitingListEntry Delete /api/waiting-list/:ambulanceId/entries/:entryId
+    // DeleteWaitingListEntry Delete /api/waiting-list/entries/:id_patient
     // Deletes specific entry 
      DeleteWaitingListEntry(c *gin.Context)
 
-    // GetWaitingListEntries Get /api/waiting-list/:ambulanceId/entries
+    // GetWaitingListEntries Get /api/waiting-list
     // Provides the ambulance waiting list 
      GetWaitingListEntries(c *gin.Context)
 
-    // GetWaitingListEntry Get /api/waiting-list/:ambulanceId/entries/:entryId
+    // GetWaitingListEntry Get /api/waiting-list/entries/:id_patient
     // Provides details about waiting list entry 
      GetWaitingListEntry(c *gin.Context)
 
-    // UpdateWaitingListEntry Put /api/waiting-list/:ambulanceId/entries/:entryId
+    // UpdateWaitingListEntry Put /api/waiting-list/entries/:id_patient
     // Updates specific entry 
      UpdateWaitingListEntry(c *gin.Context)
 
