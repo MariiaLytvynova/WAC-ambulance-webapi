@@ -8,19 +8,19 @@ import (
 
 )
 
-type implExaminationPatientAPI struct {
+type implExaminationsPatientAPI struct {
     db *db_service.PostgresService
 }
 
-func NewExaminationsPatientApi(db *db_service.PostgresService) ExaminationpatientAPI {
-	return &implExaminationPatientAPI{
+func NewExaminationsPatientApi(db *db_service.PostgresService) ExaminationsPatientAPI {
+	return &implExaminationsPatientAPI{
 		db: db,
 	}
 }
 
-func (o implExaminationPatientAPI) CreateExamination(c *gin.Context) {
+func (o implExaminationsPatientAPI) CreateExamination(c *gin.Context) {
 	fmt.Println("Add new examination")
- var examination ExaminationResponse
+ var examination Examinations
     if err := c.BindJSON(&examination); err != nil {
             fmt.Println("----- BindJSON error:", err)
 
@@ -60,9 +60,9 @@ func (o implExaminationPatientAPI) CreateExamination(c *gin.Context) {
     })
 }
 
-func (o implExaminationPatientAPI) DeleteExamination(c *gin.Context) {
+func (o implExaminationsPatientAPI) DeleteExamination(c *gin.Context) {
     fmt.Println("UpdateExamination HIT")
-    var examination ExaminationResponse
+    var examination Examinations
     if err := c.BindJSON(&examination); err != nil {
             fmt.Println("----- BindJSON error:", err)
 
@@ -91,9 +91,9 @@ func (o implExaminationPatientAPI) DeleteExamination(c *gin.Context) {
 // WHERE id = 123;
 }
 
-func (o implExaminationPatientAPI) UpdateExamination(c *gin.Context) {
+func (o implExaminationsPatientAPI) UpdateExamination(c *gin.Context) {
 	fmt.Println("UpdateExamination HIT")
-    var examination ExaminationResponse
+    var examination Examinations
     if err := c.BindJSON(&examination); err != nil {
             fmt.Println("----- BindJSON error:", err)
 
@@ -128,7 +128,7 @@ rows, _ := res.RowsAffected()
 fmt.Println("ROWS AFFECTED:", rows)
 }	
 
-func (o implExaminationPatientAPI) GetExaminations(c *gin.Context) {
+func (o implExaminationsPatientAPI) GetExaminations(c *gin.Context) {
     patientId := c.Param("patientId") //ziskaj s frontend api callu
 
     rows, err := o.db.DB.Query(`
@@ -145,10 +145,10 @@ func (o implExaminationPatientAPI) GetExaminations(c *gin.Context) {
     }
     defer rows.Close()
 
-    var examinations []Examination
+    var examinations []Examinations
 
     for rows.Next() {
-        var e Examination
+        var e Examinations
 
         err := rows.Scan(
             &e.Id,
