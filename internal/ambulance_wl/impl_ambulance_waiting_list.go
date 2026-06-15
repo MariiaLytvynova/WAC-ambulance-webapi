@@ -2,7 +2,7 @@ package ambulance_wl
 
 import (
     "net/http"
-
+    "fmt"
     "github.com/gin-gonic/gin"
     "github.com/MariiaLytvynova/WAC-ambulance-webapi/internal/db_service"
 
@@ -20,7 +20,40 @@ return &implAmbulanceWaitingListAPI{
 }
 
 func (o implAmbulanceWaitingListAPI) CreateWaitingListEntry(c *gin.Context) {
-    c.AbortWithStatus(http.StatusNotImplemented)
+	fmt.Println("Add new examination")
+    var waiting WaitingListEntry
+    if err := c.BindJSON(&waiting); err != nil {
+            fmt.Println("----- BindJSON error:", err)
+
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+    fmt.Println("Gets", waiting)
+
+     _, err := o.db.DB.Exec(`
+        INSERT INTO patients (
+            name,
+            fullname
+            )
+        VALUES ($1, $2)
+    `,
+        waiting.Name,
+        waiting.Fullname,
+    )
+
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+
+    c.JSON(http.StatusCreated, gin.H{
+        "message": "Examination created successfully",
+    })
+
 }
 
 func (o implAmbulanceWaitingListAPI) DeleteWaitingListEntry(c *gin.Context) {

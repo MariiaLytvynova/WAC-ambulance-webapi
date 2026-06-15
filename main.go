@@ -34,13 +34,8 @@ func createTables(db *db_service.PostgresService) {
     query2 := `
         CREATE TABLE IF NOT EXISTS patients (
             id_patient INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            id_doctor INT NOT NULL,
             name VARCHAR(255) NOT NULL,
             fullname VARCHAR(255) NOT NULL,
-
-            CONSTRAINT fk_patient_doctor
-            FOREIGN KEY (id_doctor)
-            REFERENCES doctors(id)
 )
     `
 
