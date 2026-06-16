@@ -1,0 +1,153 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-ambulance-webapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: ml-ambulance-webapi-label
+  template:
+    metadata:
+      labels:
+        pod: ml-ambulance-webapi-label
+    spec:
+      volumes:
+      - name: init-scripts
+        configMap:
+          name: ml-ambulance-webapi-postgres-init
+
+      initContainers:
+      - name: init-postgres
+        image: postgres:17
+        imagePullPolicy: Always
+        command: ["sh", "-c"]
+        args:
+          - |
+            echo "Waiting for Postgres...";
+            until pg_isready -h $AMBULANCE_API_DB_HOST -p $AMBULANCE_API_DB_PORT -U $AMBULANCE_API_DB_USERNAME; do
+              sleep 2;
+            done;
+
+            echo "Running init script...";
+            PGPASSWORD=$AMBULANCE_API_DB_PASSWORD psql \
+              -h $AMBULANCE_API_DB_HOST \
+              -p $AMBULANCE_API_DB_PORT \
+              -U $AMBULANCE_API_DB_USERNAME \
+              -d $AMBULANCE_API_DB_NAME \
+              -f /scripts/init-db.sql
+        volumeMounts:
+          - name: init-scripts
+            mountPath: /scripts
+        env:
+          - name: AMBULANCE_API_DB_HOST
+            value: postgres_db
+
+          - name: AMBULANCE_API_DB_PORT
+            value: "5432"
+
+          - name: AMBULANCE_API_DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: ambulance-db-secret
+                key: username
+
+          - name: AMBULANCE_API_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ambulance-db-secret
+                key: password
+
+          - name: AMBULANCE_API_DB_NAME
+            value: ambulance
+
+          - name: RETRY_CONNECTION_SECONDS
+            value: "5"
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "0.01"
+          limits:
+            memory: "256Mi"
+            cpu: "0.1"
+
+
+      containers:
+      - name: ml-ambulance-wl-webapi-container
+        image: mariia610/ambulance-webapi:latest
+        imagePullPolicy: Always
+        ports:
+        - name: webapi-port
+          containerPort: 8080
+        env:
+          - name: AMBULANCE_API_ENVIRONMENT
+            value: production
+
+          - name: AMBULANCE_API_PORT
+            value: "8080"
+
+          # PostgreSQL connection
+          - name: AMBULANCE_API_DB_HOST
+            value: postgres_db
+
+          - name: AMBULANCE_API_DB_PORT
+            value: "5432"
+
+          - name: AMBULANCE_API_DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: ambulance-db-secret
+                key: username
+
+          - name: AMBULANCE_API_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ambulance-db-secret
+                key: password
+
+          - name: AMBULANCE_API_DB_NAME
+            value: ambulance
+
+          - name: AMBULANCE_API_DB_TIMEOUT_SECONDS
+            value: "5"
+
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "0.01"
+          limits:
+            memory: "512Mi"
+            cpu: "0.3"
+
+      - name: openapi-ui
+        image: swaggerapi/swagger-ui
+        imagePullPolicy: Always
+        ports:
+        - name: api-ui
+          containerPort: 8081
+        env:
+          - name: PORT
+            value: "8081"
+          - name:   URL
+            value: /openapi
+          - name: BASE_URL
+            value: /openapi-ui
+          - name: FILTER
+            value: 'true'
+          - name: DISPLAY_OPERATION_ID
+            value: 'true'
+        resources:
+          requests:
+            memory: "16M"
+            cpu: "0.01"
+          limits:
+            memory: "64M"
+            cpu: "0.1"
+
+
+
+
+
+
+

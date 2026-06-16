@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-ambulance-webapi
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: init-postgres
+          env:
+            - name: AMBULANCE_API_DB_HOST
+              value: postgres_db
+
+            - name: AMBULANCE_API_DB_PORT
+              value: "5432"
+
+            - name: AMBULANCE_API_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ambulance-db-secret
+                  key: username
+
+            - name: AMBULANCE_API_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ambulance-db-secret
+                  key: password
+
+            - name: AMBULANCE_API_DB_NAME
+              value: ambulance
+
+      containers:
+        - name: ml-ambulance-wl-webapi-container
+          env:
+            - name: AMBULANCE_API_DB_HOST
+              value: postgres_db
+
+            - name: AMBULANCE_API_DB_PORT
+              value: "5432"
+
+            - name: AMBULANCE_API_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ambulance-db-secret
+                  key: username
+
+            - name: AMBULANCE_API_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ambulance-db-secret
+                  key: password
+
+            - name: AMBULANCE_API_DB_NAME
+              value: ambulance
+
+            - name: AMBULANCE_API_DB_TIMEOUT_SECONDS
+              value: "5"

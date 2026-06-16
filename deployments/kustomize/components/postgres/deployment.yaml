@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: &PODNAME postgres-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: *PODNAME
+  template:
+    metadata:
+      labels:
+        pod: *PODNAME
+    spec:
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+      containers:
+        - name: *PODNAME
+          image: postgres:17
+          imagePullPolicy: Always
+
+          ports:
+            - name: postgres-port
+              containerPort: 5432
+
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ambulance-db-secret
+                  key: username
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ambulance-db-secret
+                  key: password
+
+            - name: POSTGRES_DB
+              value: ambulance
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "0.1"
+            limits:
+              memory: "2Gi"
+              cpu: "0.5"
