@@ -9,7 +9,7 @@ spec:
         - name: init-postgres
           env:
             - name: AMBULANCE_API_DB_HOST
-              value: postgres_db
+              value: postgres-db
 
             - name: AMBULANCE_API_DB_PORT
               value: "5432"
@@ -33,7 +33,7 @@ spec:
         - name: ml-ambulance-wl-webapi-container
           env:
             - name: AMBULANCE_API_DB_HOST
-              value: postgres_db
+              value: postgres-db
 
             - name: AMBULANCE_API_DB_PORT
               value: "5432"

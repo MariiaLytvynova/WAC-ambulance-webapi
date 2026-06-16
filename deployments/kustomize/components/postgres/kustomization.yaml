@@ -11,7 +11,7 @@ configMapGenerator:
     options:
       disableNameSuffixHash: true
     literals:
-      - host=postgres_db
+      - host=postgres-db
       - port=5432
       - database=ambulance
 

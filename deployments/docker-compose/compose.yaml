@@ -1,7 +1,7 @@
 services:
-  postgres_db:
+  postgres-db:
     image: postgres:17
-    container_name: postgres_db
+    container_name: postgres-db
     restart: always
     ports:
       - "5432:5432"
@@ -22,7 +22,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: postrges
     depends_on:
-      - postgres_db
+      - postgres-db
 
 volumes:
   db_data: {}

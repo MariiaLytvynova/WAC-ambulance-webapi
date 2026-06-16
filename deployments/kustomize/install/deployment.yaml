@@ -41,7 +41,7 @@ spec:
             mountPath: /scripts
         env:
           - name: AMBULANCE_API_DB_HOST
-            value: postgres_db
+            value: postgres-db
 
           - name: AMBULANCE_API_DB_PORT
             value: "5432"
@@ -89,7 +89,7 @@ spec:
 
           # PostgreSQL connection
           - name: AMBULANCE_API_DB_HOST
-            value: postgres_db
+            value: postgres-db
 
           - name: AMBULANCE_API_DB_PORT
             value: "5432"
