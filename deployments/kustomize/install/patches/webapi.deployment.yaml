@@ -7,51 +7,72 @@ spec:
     spec:
       initContainers:
         - name: init-postgres
+          image: postgres:17
+          imagePullPolicy: Always
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for Postgres...";
+              until pg_isready -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER; do
+                sleep 2;
+              done;
+
+              echo "Running init script...";
+              PGPASSWORD=$POSTGRES_PASSWORD psql \
+                -h $POSTGRES_HOST \
+                -p $POSTGRES_PORT \
+                -U $POSTGRES_USER \
+                -d $POSTGRES_DB \
+                -f /scripts/init-db.sql
+
           env:
-            - name: AMBULANCE_API_DB_HOST
+            - name: POSTGRES_HOST
               value: postgres-db
 
-            - name: AMBULANCE_API_DB_PORT
+            - name: POSTGRES_PORT
               value: "5432"
 
-            - name: AMBULANCE_API_DB_USERNAME
+            - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
                   name: ambulance-db-secret
                   key: username
 
-            - name: AMBULANCE_API_DB_PASSWORD
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: ambulance-db-secret
                   key: password
 
-            - name: AMBULANCE_API_DB_NAME
+            - name: POSTGRES_DB
               value: ambulance
 
       containers:
         - name: ml-ambulance-webapi-container
           env:
-            - name: AMBULANCE_API_DB_HOST
+            - name: POSTGRES_HOST
               value: postgres-db
 
-            - name: AMBULANCE_API_DB_PORT
+            - name: POSTGRES_PORT
               value: "5432"
 
-            - name: AMBULANCE_API_DB_USERNAME
+            - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
                   name: ambulance-db-secret
                   key: username
 
-            - name: AMBULANCE_API_DB_PASSWORD
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: ambulance-db-secret
                   key: password
 
-            - name: AMBULANCE_API_DB_NAME
+            - name: POSTGRES_DB
               value: ambulance
 
-            - name: AMBULANCE_API_DB_TIMEOUT_SECONDS
+            - name: POSTGRES_SSLMODE
+              value: disable
+
+            - name: POSTGRES_TIMEOUT_SECONDS
               value: "5"

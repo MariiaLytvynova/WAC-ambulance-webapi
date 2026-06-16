@@ -5,4 +5,4 @@ resources:
   - ../install
 
 components:
-  - ../components/postgres
+  - ../components/postgreskubectl exec -it ml-ambulance-webapi-9d49d75cb-zn272 -n wac-hospital -c ml-ambulance-webapi-container -- printenv

@@ -25,44 +25,43 @@ spec:
         args:
           - |
             echo "Waiting for Postgres...";
-            until pg_isready -h $AMBULANCE_API_DB_HOST -p $AMBULANCE_API_DB_PORT -U $AMBULANCE_API_DB_USERNAME; do
+            until pg_isready -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER; do
               sleep 2;
             done;
 
             echo "Running init script...";
-            PGPASSWORD=$AMBULANCE_API_DB_PASSWORD psql \
-              -h $AMBULANCE_API_DB_HOST \
-              -p $AMBULANCE_API_DB_PORT \
-              -U $AMBULANCE_API_DB_USERNAME \
-              -d $AMBULANCE_API_DB_NAME \
+            PGPASSWORD=$POSTGRES_PASSWORD psql \
+              -h $POSTGRES_HOST \
+              -p $POSTGRES_PORT \
+              -U $POSTGRES_USER \
+              -d $POSTGRES_DB \
               -f /scripts/init-db.sql
+
         volumeMounts:
           - name: init-scripts
             mountPath: /scripts
+
         env:
-          - name: AMBULANCE_API_DB_HOST
+          - name: POSTGRES_HOST
             value: postgres-db
 
-          - name: AMBULANCE_API_DB_PORT
+          - name: POSTGRES_PORT
             value: "5432"
 
-          - name: AMBULANCE_API_DB_USERNAME
+          - name: POSTGRES_USER
             valueFrom:
               secretKeyRef:
                 name: ambulance-db-secret
                 key: username
 
-          - name: AMBULANCE_API_DB_PASSWORD
+          - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: ambulance-db-secret
                 key: password
 
-          - name: AMBULANCE_API_DB_NAME
+          - name: POSTGRES_DB
             value: ambulance
-
-          - name: RETRY_CONNECTION_SECONDS
-            value: "5"
 
         resources:
           requests:
@@ -72,7 +71,6 @@ spec:
             memory: "256Mi"
             cpu: "0.1"
 
-
       containers:
       - name: ml-ambulance-webapi-container
         image: mariia610/ambulance-webapi:latest
@@ -80,6 +78,7 @@ spec:
         ports:
         - name: webapi-port
           containerPort: 8080
+
         env:
           - name: AMBULANCE_API_ENVIRONMENT
             value: production
@@ -87,30 +86,30 @@ spec:
           - name: AMBULANCE_API_PORT
             value: "8080"
 
-          # PostgreSQL connection
-          - name: AMBULANCE_API_DB_HOST
+          # IMPORTANT: match Go code (POSTGRES_*)
+          - name: POSTGRES_HOST
             value: postgres-db
 
-          - name: AMBULANCE_API_DB_PORT
+          - name: POSTGRES_PORT
             value: "5432"
 
-          - name: AMBULANCE_API_DB_USERNAME
+          - name: POSTGRES_USER
             valueFrom:
               secretKeyRef:
                 name: ambulance-db-secret
                 key: username
 
-          - name: AMBULANCE_API_DB_PASSWORD
+          - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: ambulance-db-secret
                 key: password
 
-          - name: AMBULANCE_API_DB_NAME
+          - name: POSTGRES_DB
             value: ambulance
 
-          - name: AMBULANCE_API_DB_TIMEOUT_SECONDS
-            value: "5"
+          - name: POSTGRES_SSLMODE
+            value: disable
 
         resources:
           requests:
@@ -126,17 +125,23 @@ spec:
         ports:
         - name: api-ui
           containerPort: 8081
+
         env:
           - name: PORT
             value: "8081"
-          - name:   URL
+
+          - name: URL
             value: /openapi
+
           - name: BASE_URL
             value: /openapi-ui
+
           - name: FILTER
-            value: 'true'
+            value: "true"
+
           - name: DISPLAY_OPERATION_ID
-            value: 'true'
+            value: "true"
+
         resources:
           requests:
             memory: "16M"
@@ -144,10 +149,3 @@ spec:
           limits:
             memory: "64M"
             cpu: "0.1"
-
-
-
-
-
-
-
