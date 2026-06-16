@@ -48,6 +48,7 @@ func main() {
     })
     engine.Use(corsMiddleware)
 
+    
     // request routings
     handleFunctions := &ambulance_wl.ApiHandleFunctions{ //vytvaram objekty, ktore implementuju rozhrania
     AmbulanceConditionsAPI:  ambulance_wl.NewAmbulanceConditionsApi(db),
