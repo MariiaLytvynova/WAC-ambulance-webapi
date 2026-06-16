@@ -30,7 +30,7 @@ spec:
               value: ambulance
 
       containers:
-        - name: ml-ambulance-wl-webapi-container
+        - name: ml-ambulance-webapi-container
           env:
             - name: AMBULANCE_API_DB_HOST
               value: postgres-db

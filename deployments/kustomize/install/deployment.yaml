@@ -74,7 +74,7 @@ spec:
 
 
       containers:
-      - name: ml-ambulance-wl-webapi-container
+      - name: ml-ambulance-webapi-container
         image: mariia610/ambulance-webapi:latest
         imagePullPolicy: Always
         ports:
